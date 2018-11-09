@@ -1,0 +1,14 @@
+{
+  "name": "@suzh/cli",
+  "version": "0.0.1",
+  "description": "Command line interface for rapid front end  development",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "cli"
+  ],
+  "author": "Ziv Su",
+  "license": "MIT"
+}

@@ -1,0 +1,7 @@
+{
+  "author": "Ziv Su",
+  "private": true,
+  "workspaces": [
+    "packages/@suzh/*"
+  ]
+}
