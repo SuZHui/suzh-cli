@@ -7,6 +7,7 @@ const inquirer = require('inquirer');
 const chalk = require('chalk');
 
 const { getPromptModules } = require('./util/createTools');
+const { clearConsole } = require('./util/logger'); 
 const Creator = require('./Creator');
 
 async function create(projectName, options) {
@@ -34,6 +35,7 @@ async function create(projectName, options) {
     // 如果存在 清除文件 重新生成
     // 如果不存在 新建项目
     if (fs.existsSync(targetDir)) {
+        clearConsole();
         // 如果用户输入的项目名称是当前路径(.)
         // confirm 确认下一步操作 [覆盖， 合并, 取消]
         if (inCurrent) {
@@ -72,7 +74,7 @@ async function create(projectName, options) {
     }
 
     const creator = new Creator(name, targetDir, getPromptModules());
-    // await creator.create(options);
+    await creator.create(options);
 }
 
 module.exports = (...args) => {
