@@ -1,0 +1,36 @@
+{
+    "name": "@suzh/cli",
+    "version": "0.0.1",
+    "description": "Command line interface for rapid front end development",
+    "bin": {
+        "suzh": "./dist/bin/main.js"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "cli"
+    ],
+    "author": "Ziv Su",
+    "license": "MIT",
+    "dependencies": {
+        "@types/node": "^10.12.7",
+        "chalk": "^2.4.1",
+        "commander": "^2.19.0",
+        "execa": "^1.0.0",
+        "fs-extra": "^7.0.1",
+        "inquirer": "^6.2.0",
+        "joi": "^14.0.6",
+        "lodash": "^4.17.11",
+        "semver": "^5.6.0",
+        "string.prototype.padstart": "^3.0.0",
+        "validate-npm-package-name": "^3.0.0"
+    },
+    "engines": {
+        "node": ">=8.9"
+    },
+    "devDependencies": {
+        "@types/fs-extra": "^5.0.4",
+        "typescript": "^3.1.6"
+    }
+}

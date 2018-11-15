@@ -2,6 +2,7 @@ const EventEmitter = require('events');
 
 const writeFileTree = require('./util/writeFileTree');
 const PromptModuleAPI = require('./PromptModuleAPI');
+const { installDeps } = require('./util/installDeps');
 
 const {
     defaults,
@@ -71,6 +72,12 @@ module.exports = class Creator extends EventEmitter {
             'package.json': JSON.stringify(pkg, null, 2)
         });
         // TODO: 生成文件11.13END
+
+        const packageManager = (
+            cliOptions.packageMnager ||
+            loadOptions().packageManager ||
+            (hasYarn() ? 'yarn' : 'npm')
+        );
     }
 
 
