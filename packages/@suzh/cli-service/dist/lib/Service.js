@@ -42,15 +42,15 @@ var chalk_1 = require("chalk");
 var loadEnv_1 = require("./util/loadEnv");
 var logger_1 = require("./util/logger");
 /**
- * TODO: 加载.env环境配置文件
- * TODO: 加载suzh.config.js配置
- * TODO: 加载项目base配置文件
- * TODO: 加载webpack配置文件
- * TODO: 运行命令队列
+ *  加载.env环境配置文件
+ *  加载suzh.config.js配置
+ *  加载项目base配置文件
+ *  TODO: 加载webpack配置文件
+ *  TODO: 运行命令队列
  *
- * @export
- * @class Service
- */
+ *  @export
+ *  @class Service
+ **/
 var Service = /** @class */ (function () {
     /**
      * Creates an instance of Service.
@@ -60,12 +60,17 @@ var Service = /** @class */ (function () {
     function Service(context, options) {
         if (options === void 0) { options = {}; }
         this.context = context;
+        // 命令行数据
+        this.commands = {};
         var pkg = options.pkg;
         this.pkg = this.resolvePkg(pkg);
+        this.plugins = this.resolvePlugins();
     }
     /**
      * 根据【MODE】初始化服务
-     *
+     * 加载环境变量
+     * 加载用户配置
+     * 加载插件
      * @private
      * @param {string} mode
      * @memberof Service
@@ -79,10 +84,39 @@ var Service = /** @class */ (function () {
         this.loadEnv();
         // 加载用户配置文件
         this.loadUserOptions();
+        // TODO: 执行plugins 列表动态加载的脚本,
+        // TODO: 传入必要参数 包名， 全局项目配置项
+        // TODO: 78line
+        // this.plugins.forEach(() => {})
     };
-    Service.prototype.run = function () {
-        this.init('development');
-        // TODO: 根据命令进行生成
+    /**
+     * 执行命令
+     * @param command 命令
+     * @param args 参数键值对
+     * @param rawArgv 参数数组
+     */
+    Service.prototype.run = function (name, args, rawArgv) {
+        console.log(name, args, rawArgv);
+        // 设定初始
+        var mode = args.mode || (name === 'build' && args.watch ? 'development' : 'production');
+        this.init(mode);
+        args._ = args._ || [];
+        var command = this.commands[name];
+        if (!command && name) {
+            logger_1.error("command \"" + name + "\" does not exist.");
+            process.exit(1);
+        }
+        // suzh-cli-service help [command]
+        if (!command || args['help']) {
+            command = this.commands['help'];
+        }
+        else {
+            args._.shift();
+            rawArgv.shift();
+        }
+        var fn = command.fn;
+        console.log(args, rawArgv, fn);
+        return fn(args, rawArgv);
     };
     /**
      * 加载环境文件
@@ -189,6 +223,47 @@ var Service = /** @class */ (function () {
                 }
             });
         });
+    };
+    /**
+     * TODO: 解析插件（plugins）列表， 返回依赖数组对象
+     *
+     * @private
+     * @memberof Service
+     */
+    Service.prototype.resolvePlugins = function () {
+        var _this = this;
+        // 通过ID加载plugins
+        var idToPlugin = function (id) { return __awaiter(_this, void 0, void 0, function () {
+            var _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _a = {
+                            id: id.replace(/^.\//, 'built-in:')
+                        };
+                        return [4 /*yield*/, Promise.resolve().then(function () { return require(id); })];
+                    case 1: return [2 /*return*/, (_a.apply = _b.sent(),
+                            _a)];
+                }
+            });
+        }); };
+        var plugins;
+        // 通过解析给定的字符串，最后生成数组对象 {id: string, apply: fn}[]
+        var builtInPlugins = [].map(idToPlugin);
+        // TODO: 从commands文件夹 动态加载命令执行文件 [serve, build ...]
+        // TODO: 154 line
+        // if (inlinePlugins) {
+        //     plugins = useBuildIn !== false
+        //         ? builtInPlugins.concat(inlinePlugins)
+        //         : inlinePlugins
+        // } else {
+        //     // 整合所有package.json中的依赖
+        //     // 调用[isPlugin]获取依赖列表
+        //     // 安装依赖
+        //     const projectPlugins = Object.keys(this.pkg.devDependencies || {})
+        //         .concat(Object.keys(this.pkg.dependencies || {}))
+        //         // .filter()
+        // }
     };
     return Service;
 }());
